@@ -69,7 +69,7 @@ Vagrant.configure(2) do |config|
   # Shell commands below from https://www.dokuwiki.org/install:ubuntu
     config.vm.provision "shell", inline: <<-SHELL
       sudo apt-get update && sudo apt-get upgrade
-      sudo apt-get install -y apache2 libapache2-mod-php5
+      sudo apt-get install -y apache2 libapache2-mod-php5 git
 	  sudo a2enmod rewrite
 	  cd /var/www
 	  sudo wget http://download.dokuwiki.org/src/dokuwiki/dokuwiki-stable.tgz
@@ -81,5 +81,9 @@ Vagrant.configure(2) do |config|
 	  sudo rm -f /etc/apache2/apache2.conf
 	  sudo cp /vagrant/etc/apache2/apache2.conf /etc/apache2/
 	  sudo service apache2 restart
+      mkdir /vagrant/dokuwiki-data-mirror
+      cd /vagrant/dokuwiki-data-mirror
+      git init
+      (crontab -l 2>/dev/null; echo "*/0 * * * * /vagrant/backup.sh") | crontab -
     SHELL
 end
